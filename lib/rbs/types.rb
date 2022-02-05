@@ -439,10 +439,12 @@ module RBS
     class Record
       attr_reader :fields
       attr_reader :location
+      attr_reader :optional_keys
 
-      def initialize(fields:, location:)
+      def initialize(fields:, location:, optional_keys:)
         @fields = fields
         @location = location
+        @optional_keys = optional_keys
       end
 
       def ==(other)
@@ -496,7 +498,8 @@ module RBS
       def map_type_name(&block)
         Record.new(
           fields: fields.transform_values {|ty| ty.map_type_name(&block) },
-          location: location
+          location: location,
+          optional_keys: optional_keys
         )
       end
 
@@ -504,7 +507,8 @@ module RBS
         if block
           Record.new(
             fields: fields.transform_values {|type| yield type },
-            location: location
+            location: location,
+            optional_keys: optional_keys
           )
         else
           enum_for :map_type

@@ -232,10 +232,11 @@ VALUE rbs_literal(VALUE literal, VALUE location) {
   );
 }
 
-VALUE rbs_record(VALUE fields, VALUE location) {
+VALUE rbs_record(VALUE fields, VALUE location, VALUE optional_keys) {
   VALUE args = rb_hash_new();
   rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
   rb_hash_aset(args, ID2SYM(rb_intern("fields")), fields);
+  rb_hash_aset(args, ID2SYM(rb_intern("optional_keys")), optional_keys);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Record,

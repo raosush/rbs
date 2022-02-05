@@ -19,3 +19,4 @@
 lib/**/*.bundle
 lib/**/*.so
 lib/**/*.dll
+.vscode/c_cpp_properties.json

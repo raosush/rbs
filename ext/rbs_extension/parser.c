@@ -659,13 +659,18 @@ static VALUE parse_proc_type(parserstate *state) {
   record_attribute ::= {} keyword_token `:` <type>
                      | {} literal_type `=>` <type>
 */
-VALUE parse_record_attributes(parserstate *state) {
+VALUE parse_record_attributes(parserstate *state, VALUE *optional_keys) {
   VALUE hash = rb_hash_new();
 
   while (true) {
     VALUE key;
     VALUE type;
+    bool optional = false;
 
+    if (state->next_token.type == pQUESTION) {
+      parser_advance(state);
+      optional = true;
+    }
     if (is_keyword(state)) {
       // { foo: type } syntax
       key = parse_keyword_key(state);
@@ -690,6 +695,9 @@ VALUE parse_record_attributes(parserstate *state) {
     }
     type = parse_type(state);
     rb_hash_aset(hash, key, type);
+    if (optional) {
+      rb_hash_aset(*optional_keys, key, Qtrue);
+    }
 
     if (parser_advance_if(state, pCOMMA)) {
       if (state->next_token.type == pRBRACE) {
@@ -917,11 +925,12 @@ static VALUE parse_simple(parserstate *state) {
   }
   case pLBRACE: {
     position start = state->current_token.range.start;
-    VALUE fields = parse_record_attributes(state);
+    VALUE optional_keys = rb_hash_new();
+    VALUE fields = parse_record_attributes(state, &optional_keys);
     parser_advance_assert(state, pRBRACE);
     position end = state->current_token.range.end;
     VALUE location = rbs_location_pp(state->buffer, &start, &end);
-    return rbs_record(fields, location);
+    return rbs_record(fields, location, optional_keys);
   }
   case pHAT: {
     return parse_proc_type(state);

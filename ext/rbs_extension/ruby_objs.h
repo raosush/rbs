@@ -34,7 +34,7 @@ VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location
 VALUE rbs_namespace(VALUE path, VALUE absolute);
 VALUE rbs_optional(VALUE type, VALUE location);
 VALUE rbs_proc(VALUE function, VALUE block, VALUE location);
-VALUE rbs_record(VALUE fields, VALUE location);
+VALUE rbs_record(VALUE fields, VALUE location, VALUE optional_keys);
 VALUE rbs_tuple(VALUE types, VALUE location);
 VALUE rbs_type_name(VALUE namespace, VALUE name);
 VALUE rbs_union(VALUE types, VALUE location);
